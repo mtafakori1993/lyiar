@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Lyria Test</title>
+</head>
+
+<body>
+
+<h2>Google Lyria Music Test</h2>
+
+
+<textarea row="24" id="prompt"
+style="width:500px; height: 800px"
+value="موسیقی کردی آرام با پیانو و صدای زن" ></textarea>
+
+
+<button onclick="generate()">
+ساخت موسیقی
+</button>
+
+
+<br><br>
+
+
+<audio id="player" controls></audio>
+
+
+<script>
+
+async function generate(){
+
+    let prompt =
+        document.getElementById("prompt").value;
+
+
+    let form =
+        new FormData();
+
+    form.append(
+        "prompt",
+        prompt
+    );
+
+
+    let res =
+        await fetch(
+            "/generate",
+            {
+                method:"POST",
+                body:form
+            }
+        );
+
+
+    let data =
+        await res.json();
+
+
+    if(data.audio){
+
+        let player =
+            document.getElementById(
+                "player"
+            );
+
+        player.src =
+            data.audio + "?t=" + Date.now();
+
+        player.play();
+
+    }
+    else{
+
+        alert(
+            JSON.stringify(data)
+        );
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

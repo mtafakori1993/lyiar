@@ -1,0 +1,28 @@
+services:
+  music-service:
+    build: .
+    container_name: lyiar-music-service
+    ports:
+      - "8000:8000"
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_BASE_URL: ${OPENROUTER_BASE_URL:-https://openrouter.ai/api/v1}
+      MUSIC_AGENT_MODEL: ${MUSIC_AGENT_MODEL:-google/gemini-3.1-flash-lite}
+      MUSIC_OUTRO_MODEL: ${MUSIC_OUTRO_MODEL:-google/gemini-3.1-flash-lite}
+      MUSIC_OUTRO_MAX_TOKENS: ${MUSIC_OUTRO_MAX_TOKENS:-100}
+      MUSIC_OUTRO_TIMEOUT_SECONDS: ${MUSIC_OUTRO_TIMEOUT_SECONDS:-20}
+      LYRIA_MODEL: ${LYRIA_MODEL:-google/lyria-3-clip-preview}
+      REDIS_URL: redis://redis:6379/0
+      SESSION_TTL_SECONDS: ${SESSION_TTL_SECONDS:-1800}
+      OUTPUT_DIR: /app/output
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ./output:/app/output
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: lyiar-redis
+    restart: unless-stopped
